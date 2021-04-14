@@ -195,3 +195,24 @@ You can change the parameters that are related to the detection by adding a new 
 * **`yolo_model/detection_classes/names`** (array of strings)
 
     Detection names of the network used by the cfg and weights file inside `darknet_ros/yolo_network_config/`.
+
+### Troubleshooting common errors
+
+* **CMake Errors conflicting PX4 and darknet_ros**
+
+    The CMake arguments `-DCMAKE_BUILD_TYPE=RELEASE` required for darknet_ros package resulted in CMake failing for PX4 and no usage of CMake arguments led to the failing of the latter. The following resolved the issue:
+    
+    1.  Remove darknet_ros from catkin_ws/src.
+    2.  Build the catkin workspace consisting PX4 and other packages using: `$ catkin build`
+    3.  Upon successful build, clone the darknet_ros repo
+    4.  Build only darknet_ros using: `$ catkin build darknet_ros -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc-6`
+
+
+* **`ERROR: cannot launch node of type [darknet_ros/darknet_ros]: can't locate node [darknet_ros] in package [darknet_ros]`**
+
+    This is what worked for me [Ubuntu 18.04 and ROS-Melodic]:
+    1.  Delete existing darknet_ros files, if any.
+    2.  Setup ssh key and add it to your Github [Refer this] (https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
+    3.  Fork the darknet_ros repository
+    4.  Clone your forked darknet_ros repo: `$ git clone --recursive https://github.com/<your-username>/darknet_ros.git`
+    5.  Build catkin workspace: `$ catkin build darknet_ros -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc-6`
